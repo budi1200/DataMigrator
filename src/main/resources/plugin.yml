@@ -1,0 +1,17 @@
+name: DataMigrator
+version: ${version}
+author: budi1200
+main: si.budimir.dataMigrator.DataMigrator
+api-version: 1.17
+depends: [LuckPerms, Autorank]
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:1.5.10
+commands:
+  dmig:
+    description: Main DM command
+    usage: /dmig
+
+permissions:
+  datamigrator.admin:
+    description: Reload the plugin
+    default: op
