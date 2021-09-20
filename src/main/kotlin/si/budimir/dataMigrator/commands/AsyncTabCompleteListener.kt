@@ -16,7 +16,7 @@ class AsyncTabCompleteListener(private val plugin: DataMigrator): Listener {
     fun onAsyncTabComplete(event: AsyncTabCompleteEvent) {
         val buffer = event.buffer
 
-        if ((!event.isCommand || !buffer.startsWith("/bcapture")) || buffer.indexOf(' ') == -1 ) {
+        if ((!event.isCommand || !buffer.startsWith("/dmig")) || buffer.indexOf(' ') == -1 ) {
             return
         }
 
