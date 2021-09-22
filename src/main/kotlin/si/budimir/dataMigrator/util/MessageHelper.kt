@@ -1,8 +1,6 @@
 package si.budimir.dataMigrator.util
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import si.budimir.dataMigrator.DataMigrator

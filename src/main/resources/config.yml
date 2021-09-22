@@ -1,1 +1,5 @@
 pluginPrefix: "<#FC7B00><bold>DataMigration</bold> <white><bold>»</bold> "
+
+
+lang:
+  missing-permission: "<red>Missing permission"

@@ -5,7 +5,7 @@ main: si.budimir.dataMigrator.DataMigrator
 api-version: 1.17
 depends: [LuckPerms, Autorank]
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.5.10
+  - org.jetbrains.kotlin:kotlin-stdlib:1.5.31
 commands:
   dmig:
     description: Main DM command

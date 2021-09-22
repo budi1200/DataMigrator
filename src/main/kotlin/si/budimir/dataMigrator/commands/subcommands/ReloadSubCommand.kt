@@ -5,12 +5,17 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.commands.SubCommandBase
+import si.budimir.dataMigrator.util.AutorankData
 import si.budimir.dataMigrator.util.MessageHelper
 
 class ReloadSubCommand: SubCommandBase {
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        val config = DataMigrator.instance.getMainConfig()
+        val plugin = DataMigrator.instance
+        val config = plugin.getMainConfig()
+
         config.reloadConfig()
+        plugin.autorankData = AutorankData.parseAutorankData()
+
         MessageHelper.sendMessage(sender as Player, "<green>Reload Complete!")
         return true
     }
