@@ -34,6 +34,9 @@ abstract class MigrationHandler {
             val claimblocks: Int = (playtime/60)*100
             plugin.logger.info("Calculated $claimblocks claimblocks for $playerName")
 
+            // LuckPerms Data
+            plugin.logger.info(plugin.luckpermsData.users[uuid].toString())
+
 //            plugin.logger.info(plugin.autorankData[uuid.toString()].toString())
             return false
         }

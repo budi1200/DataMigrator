@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.5.31"
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    kotlin("plugin.serialization") version "1.5.31"
 }
 
 group = "si.budimir"
@@ -14,8 +15,15 @@ repositories {
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
     compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0-RC")
 
     implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "16"
+    }
 }
 
 tasks.processResources {

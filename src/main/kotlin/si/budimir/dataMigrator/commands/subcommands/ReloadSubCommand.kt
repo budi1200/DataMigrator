@@ -6,6 +6,7 @@ import org.bukkit.entity.Player
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.commands.SubCommandBase
 import si.budimir.dataMigrator.util.AutorankData
+import si.budimir.dataMigrator.util.LuckPermsData
 import si.budimir.dataMigrator.util.MessageHelper
 
 class ReloadSubCommand: SubCommandBase {
@@ -15,6 +16,7 @@ class ReloadSubCommand: SubCommandBase {
 
         config.reloadConfig()
         plugin.autorankData = AutorankData.parseAutorankData()
+        plugin.luckpermsData = LuckPermsData.parseLuckPermsData()
 
         MessageHelper.sendMessage(sender as Player, "<green>Reload Complete!")
         return true

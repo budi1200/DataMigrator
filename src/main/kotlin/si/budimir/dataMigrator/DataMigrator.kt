@@ -5,11 +5,14 @@ import si.budimir.dataMigrator.commands.AsyncTabCompleteListener
 import si.budimir.dataMigrator.commands.DataMigratorCommand
 import si.budimir.dataMigrator.config.MainConfig
 import si.budimir.dataMigrator.util.AutorankData
+import si.budimir.dataMigrator.util.LuckPermsData
+import si.budimir.dataMigrator.util.LuckPermsObject
 
 class DataMigrator: JavaPlugin() {
     private lateinit var mainConfig: MainConfig
     private lateinit var mainCommand: DataMigratorCommand
     lateinit var autorankData: Map<String, String>
+    lateinit var luckpermsData: LuckPermsObject
 
     companion object {
         lateinit var instance: DataMigrator
@@ -33,6 +36,9 @@ class DataMigrator: JavaPlugin() {
 
         // Get Autorank data
         autorankData = AutorankData.parseAutorankData()
+
+        // Get LuckPerms data
+        luckpermsData = LuckPermsData.parseLuckPermsData()
     }
 
     fun getMainCommand(): DataMigratorCommand {

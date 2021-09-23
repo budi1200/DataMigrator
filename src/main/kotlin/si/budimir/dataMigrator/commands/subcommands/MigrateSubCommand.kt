@@ -2,20 +2,20 @@ package si.budimir.dataMigrator.commands.subcommands
 
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.MigrationHandler
 import si.budimir.dataMigrator.commands.SubCommandBase
+import si.budimir.dataMigrator.util.Lang
 import si.budimir.dataMigrator.util.MessageHelper
 
 class MigrateSubCommand: SubCommandBase {
-    private val plugin = DataMigrator.instance
-
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         val migResult = MigrationHandler.migratePlayer("budi1200")
         if (migResult) {
-            // TODO
+            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_SUCCESS.path, mutableMapOf())
         } else {
-            // TODO
+            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_FAIL.path, mutableMapOf())
         }
         return true
     }
