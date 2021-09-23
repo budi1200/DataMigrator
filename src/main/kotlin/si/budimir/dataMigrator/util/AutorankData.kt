@@ -6,7 +6,7 @@ import java.io.FileInputStream
 import java.lang.Exception
 import java.util.*
 
-abstract class AutorankData() {
+abstract class AutorankData {
 
     companion object {
         private val plugin = DataMigrator.instance
