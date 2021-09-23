@@ -1,7 +1,10 @@
 package si.budimir.dataMigrator.util
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromStream
 import si.budimir.dataMigrator.DataMigrator
 import java.io.File
@@ -53,5 +56,6 @@ data class LuckPermsUser(
 data class LuckPermsNode(
     val type: String,
     val key: String,
-    val value: Boolean
+    val value: Boolean,
+    val context: HashMap<String, JsonElement> = hashMapOf()
 )
