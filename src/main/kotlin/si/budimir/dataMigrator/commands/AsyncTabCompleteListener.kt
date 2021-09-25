@@ -24,7 +24,7 @@ class AsyncTabCompleteListener(private val plugin: DataMigrator): Listener {
 
         // if we have no completion data, client will display an error, lets just send a space instead (https://bugs.mojang.com/browse/MC-165562)
         if (completions.size == 1 && completions[0] == "") {
-            completions = listOf(" ")
+            completions = emptyList()
         }
         event.completions = completions
         event.isHandled = true

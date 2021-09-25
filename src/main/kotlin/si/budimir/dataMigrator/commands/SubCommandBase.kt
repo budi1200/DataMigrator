@@ -8,7 +8,7 @@ interface SubCommandBase {
     fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean
 
     fun onTabComplete(sender: CommandSender, args: List<String>): List<String> {
-        return listOf("")
+        return emptyList()
     }
 
     fun getPermission(): String

@@ -1,5 +1,6 @@
 package si.budimir.dataMigrator.commands.subcommands
 
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -11,7 +12,19 @@ import si.budimir.dataMigrator.util.MessageHelper
 
 class MigrateSubCommand: SubCommandBase {
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        val migResult = MigrationHandler.migratePlayer("budi1200")
+        if (args.size < 2 && args.size > 3) {
+            return false
+        }
+
+        val onlinePlayerName = args[1]
+        val oldPlayerName = if (args.size != 3) {
+            null
+        } else {
+            args[2]
+        }
+
+        val migResult = MigrationHandler.migratePlayer(onlinePlayerName, oldPlayerName)
+
         if (migResult) {
             MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_SUCCESS.path, mutableMapOf())
         } else {
@@ -26,5 +39,19 @@ class MigrateSubCommand: SubCommandBase {
 
     override fun getDesc(): String {
         return "Manually attempt user migration"
+    }
+
+    override fun onTabComplete(sender: CommandSender, args: List<String>): List<String> {
+        val result = mutableListOf<String>()
+
+        if (args.size == 2 && args[1].length < 2) {
+            result.add("<current name> <old name>")
+        }
+
+        if (args.size == 3 && args[2].length < 2) {
+            result.add("<old name>")
+        }
+
+        return result
     }
 }

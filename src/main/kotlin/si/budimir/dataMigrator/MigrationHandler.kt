@@ -13,8 +13,8 @@ abstract class MigrationHandler {
     companion object {
         private val plugin = DataMigrator.instance
 
-        fun migratePlayer(playerName: String): Boolean {
-            val result = executeMigration(playerName)
+        fun migratePlayer(playerName: String, oldPlayerName: String?): Boolean {
+            val result = executeMigration(playerName, oldPlayerName)
 
             if (result.sendEmbed) {
                 val embeds = Embed(arrayListOf(buildEmbed(playerName, result)))
@@ -26,34 +26,42 @@ abstract class MigrationHandler {
             return result.status
         }
 
-        // TODO: Add option to allow no autorank data
-        private fun executeMigration(playerName: String): MigrationResult {
+        private fun executeMigration(onlinePlayerName: String, oldPlayerName: String?): MigrationResult {
             val logger = Logger()
-            logger.addLog("=== Processing player $playerName ===")
+            logger.addLog("=== Processing player $onlinePlayerName ===")
 
-            val bukkitPlayer = Bukkit.getPlayer(playerName)
+            val bukkitPlayer = Bukkit.getPlayer(onlinePlayerName)
 
             if (bukkitPlayer == null) {
-                logger.addLog("Player $playerName not found/online")
+                logger.addLog("Player $onlinePlayerName not found/online")
                 return MigrationResult(false, logger, false)
             }
 
             if (bukkitPlayer.hasPermission(Permission.MIGRATED.getPerm())) {
-                logger.addLog("Player $playerName is already migrated!")
+                logger.addLog("Player $onlinePlayerName is already migrated!")
                 return MigrationResult(false, logger, false)
+            }
+
+            // Define old player name (same as current by default)
+            var offlinePlayerName = onlinePlayerName
+
+            // Use different offline player name if provided
+            if (oldPlayerName != null) {
+                logger.addLog("  Using old name $oldPlayerName")
+                offlinePlayerName = oldPlayerName
             }
 
             val autorankData = plugin.autorankData
             var playtime: Int? = null
             var claimblocks: Int? = null
 
-            val uuid = UUIDGenerator.generateOfflineUUID("budi1200").toString()
+            val uuid = UUIDGenerator.generateOfflineUUID(offlinePlayerName).toString()
             logger.addLog("  Offline UUID: $uuid")
 
             val playtimeString = autorankData[uuid]
 
             if (playtimeString == null) {
-                logger.addLog("- Playtime for $playerName not found!")
+                logger.addLog("- Playtime for $onlinePlayerName ($offlinePlayerName) not found!")
             }
 
             if (playtimeString != null) {
@@ -61,9 +69,9 @@ abstract class MigrationHandler {
             }
 
             if (playtime != null) {
-                logger.addLog("  Found playtime $playtime for $playerName")
+                logger.addLog("  Found playtime $playtime for $onlinePlayerName ($offlinePlayerName)")
                 claimblocks = (playtime/60)*100
-                logger.addLog("  Calculated $claimblocks claimblocks for $playerName")
+                logger.addLog("  Calculated $claimblocks claimblocks for $onlinePlayerName ($offlinePlayerName)")
             } else {
                 logger.addLog("- Missing playtime - not calculating claimblocks")
             }
@@ -72,20 +80,20 @@ abstract class MigrationHandler {
             val lpUser = plugin.luckpermsData.users[uuid]
 
             if (lpUser == null) {
-                logger.addLog("- Could not find luckperms user ($playerName)")
+                logger.addLog("- Could not find luckperms user ($offlinePlayerName)")
                 return MigrationResult(false, logger)
             }
 
             // Exit if there are no nodes
             if (lpUser.nodes.size < 1) {
-                logger.addLog("- Nodes missing from player $playerName")
+                logger.addLog("- Nodes missing from player $offlinePlayerName")
                 return MigrationResult(false, logger)
             }
 
             // Prepare array for commands to be executed
             val commands = ArrayList<String>()
 
-            logger.addLog("=== Permission commands for $playerName ===")
+            logger.addLog("=== Permission commands for $onlinePlayerName ===")
 
             // Loop thru current users nodes
             lpUser.nodes.forEach { node ->
@@ -121,17 +129,17 @@ abstract class MigrationHandler {
 
                 // TODO: Replace gkit permissions?
 
-                val c = "lp user $playerName permission set ${node.key} ${node.value} $server$world"
+                val c = "lp user $onlinePlayerName permission set ${node.key} ${node.value} $server$world"
 
                 commands.add(c)
                 logger.addLog("+ $c")
             }
 
-            logger.addLog("=== Other commands for $playerName ===")
+            logger.addLog("=== Other commands for $onlinePlayerName ===")
 
             if (playtime != null) {
-                val autorankCommand = "ar set $playerName $playtimeString"
-                val gpComand = "scb $playerName $claimblocks"
+                val autorankCommand = "ar set $onlinePlayerName $playtimeString"
+                val gpComand = "scb $onlinePlayerName $claimblocks"
 
                 commands.add(autorankCommand)
                 commands.add(gpComand)
@@ -140,14 +148,19 @@ abstract class MigrationHandler {
                 logger.addLog(" $gpComand")
             }
 
-            val addMigratedPerm = "lp user $playerName permission set ${Permission.MIGRATED.getPerm()} true"
+            val addMigratedPerm = "lp user $onlinePlayerName permission set ${Permission.MIGRATED.getPerm()} true"
 
             commands.add(addMigratedPerm)
             logger.addLog(" $addMigratedPerm")
 
-            // TODO: Execute the commands list
+            // Execute the commands list
+            val console = Bukkit.getServer().consoleSender
 
-            logger.addLog("=== End of migration for $playerName ===")
+            commands.forEach { command ->
+                Bukkit.dispatchCommand(console, command)
+            }
+
+            logger.addLog("=== End of migration for $onlinePlayerName ===")
             return MigrationResult(true, logger, true, playtimeString.toString(), claimblocks.toString())
         }
 
