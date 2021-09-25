@@ -3,10 +3,10 @@ package si.budimir.dataMigrator.commands.subcommands
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.MigrationHandler
 import si.budimir.dataMigrator.commands.SubCommandBase
-import si.budimir.dataMigrator.util.Lang
+import si.budimir.dataMigrator.enums.Lang
+import si.budimir.dataMigrator.enums.Permission
 import si.budimir.dataMigrator.util.MessageHelper
 
 class MigrateSubCommand: SubCommandBase {
@@ -21,7 +21,7 @@ class MigrateSubCommand: SubCommandBase {
     }
 
     override fun getPermission(): String {
-        return "datamigrator.admin"
+        return Permission.ADMIN.getPerm()
     }
 
     override fun getDesc(): String {

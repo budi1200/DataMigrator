@@ -1,4 +1,4 @@
-package si.budimir.dataMigrator.util
+package si.budimir.dataMigrator.enums
 
 enum class Lang(val path: String) {
     MISSING_PERMISSION("lang.missing-permission"),

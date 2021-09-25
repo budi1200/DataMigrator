@@ -55,7 +55,7 @@ data class LuckPermsUser(
 @Serializable
 data class LuckPermsNode(
     val type: String,
-    val key: String,
+    var key: String,
     val value: Boolean,
     val context: HashMap<String, JsonElement> = hashMapOf()
 )

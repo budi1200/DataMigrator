@@ -16,6 +16,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
     compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0-RC")
+    compileOnly("com.squareup.okhttp3:okhttp:4.9.1")
 
     implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
 }
