@@ -6,3 +6,4 @@ lang:
   missing-permission: "<red>Missing permission"
   migration-fail: "<red>Migration Failed! Contact an admin!"
   migration-success: "<green>Migration successful!"
+  migration-start-auto: "<yellow>Automatic migration started!"

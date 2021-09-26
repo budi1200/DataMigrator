@@ -69,9 +69,9 @@ abstract class MigrationHandler {
             }
 
             if (playtime != null) {
-                logger.addLog("  Found playtime $playtime for $onlinePlayerName ($offlinePlayerName)")
+                logger.addLog("  Found playtime $playtime for $onlinePlayerName")
                 claimblocks = (playtime/60)*100
-                logger.addLog("  Calculated $claimblocks claimblocks for $onlinePlayerName ($offlinePlayerName)")
+                logger.addLog("  Calculated $claimblocks claimblocks for $onlinePlayerName")
             } else {
                 logger.addLog("- Missing playtime - not calculating claimblocks")
             }

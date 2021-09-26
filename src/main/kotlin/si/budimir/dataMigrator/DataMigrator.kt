@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import si.budimir.dataMigrator.commands.AsyncTabCompleteListener
 import si.budimir.dataMigrator.commands.DataMigratorCommand
 import si.budimir.dataMigrator.config.MainConfig
+import si.budimir.dataMigrator.listeners.PlayerJoinListener
 import si.budimir.dataMigrator.util.AutorankData
 import si.budimir.dataMigrator.util.LuckPermsData
 import si.budimir.dataMigrator.util.LuckPermsObject
@@ -33,6 +34,7 @@ class DataMigrator: JavaPlugin() {
 
         // Register events
         server.pluginManager.registerEvents(AsyncTabCompleteListener(this), this)
+        server.pluginManager.registerEvents(PlayerJoinListener(this), this)
 
         // Get Autorank data
         autorankData = AutorankData.parseAutorankData()
