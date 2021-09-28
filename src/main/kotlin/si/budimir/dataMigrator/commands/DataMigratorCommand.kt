@@ -33,7 +33,7 @@ class DataMigratorCommand : CommandExecutor, Listener {
             if (reqPerm == "" || sender.hasPermission(reqPerm)) {
                 sc.execute(sender, command, label, args)
             } else {
-                MessageHelper.sendMessage(sender as Player, Lang.MISSING_PERMISSION.path, mutableMapOf())
+                MessageHelper.sendMessage(sender as Player, Lang.MISSING_PERMISSION)
                 plugin.logger.info("${sender.name} is missing permission $reqPerm")
             }
         } else {

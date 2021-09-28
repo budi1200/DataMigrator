@@ -37,6 +37,7 @@ abstract class MigrationHandler {
                 return MigrationResult(false, logger, false)
             }
 
+            // Keeping this here just in case
             if (bukkitPlayer.hasPermission(Permission.MIGRATED.getPerm())) {
                 logger.addLog("Player $onlinePlayerName is already migrated!")
                 return MigrationResult(false, logger, false)
@@ -122,12 +123,8 @@ abstract class MigrationHandler {
                     world = "world=$worldName"
                 }
 
-                node.key = node.key.replace("raziskovalec", "pripravnik")
-                node.key = node.key.replace("velemojster", "bojevnik")
-                node.key = node.key.replace("vojak", "vodnik")
-                node.key = node.key.replace("šef", "veteran")
-
-                // TODO: Replace gkit permissions?
+                // Handle any node changes (rank names, tags, etc...)
+                node.key = processNode(node.key)
 
                 val c = "lp user $onlinePlayerName permission set ${node.key} ${node.value} $server$world"
 
@@ -162,6 +159,26 @@ abstract class MigrationHandler {
 
             logger.addLog("=== End of migration for $onlinePlayerName ===")
             return MigrationResult(true, logger, true, playtimeString.toString(), claimblocks.toString())
+        }
+
+        private fun String.replace(replacements: HashMap<String, String>): String {
+            plugin.logger.info("org key $this")
+            var result = this
+            replacements.forEach { (l, r) -> result = result.replace(l, r) }
+
+            return result
+        }
+
+        private fun processNode(key: String): String {
+            val replacementTable = hashMapOf(
+                "raziskovalec" to "pripravnik",
+                "velemojster" to "bojevnik",
+                "vojak" to "vodnik",
+                "šef" to "veteran",
+                "crazytags" to "tags"
+            )
+
+            return key.replace(replacementTable)
         }
 
         // Discord embed builder

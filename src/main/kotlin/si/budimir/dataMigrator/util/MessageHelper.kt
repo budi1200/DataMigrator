@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 import si.budimir.dataMigrator.DataMigrator
+import si.budimir.dataMigrator.enums.Lang
 
 abstract class MessageHelper {
     companion object {
@@ -12,14 +13,15 @@ abstract class MessageHelper {
         private val pluginPrefix = config.getParsedString("pluginPrefix")
 
         // Send message with string from config
-        fun sendMessage(player: Player, key: String, placeholders: MutableMap<String, String>, prefix: Boolean = true) {
+        fun sendMessage(player: Player, key: Lang, placeholders: MutableMap<String, String> = hashMapOf(), prefix: Boolean = true) {
+            val path = key.getPath()
             var tmp = Component.text("")
 
             if (prefix) {
                 tmp = tmp.append(pluginPrefix)
             }
 
-            tmp = tmp.append(config.getParsedString(key, placeholders))
+            tmp = tmp.append(config.getParsedString(path, placeholders))
 
             player.sendMessage(tmp)
         }

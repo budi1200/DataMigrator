@@ -28,15 +28,15 @@ class PlayerJoinListener(private val plugin: DataMigrator): Listener {
             plugin.logger.info("Attempting automatic migration for $playerName")
 
             // Inform player
-            MessageHelper.sendMessage(player, Lang.MIGRATION_START_AUTO.path, hashMapOf())
+            MessageHelper.sendMessage(player, Lang.MIGRATION_START_AUTO)
 
             // Execute migration
             val result = MigrationHandler.migratePlayer(playerName, null)
 
             if (result) {
-                MessageHelper.sendMessage(player, Lang.MIGRATION_SUCCESS.path, hashMapOf())
+                MessageHelper.sendMessage(player, Lang.MIGRATION_SUCCESS)
             } else {
-                MessageHelper.sendMessage(player, Lang.MIGRATION_FAIL.path)
+                MessageHelper.sendMessage(player, Lang.MIGRATION_FAIL)
             }
         }, 100)
     }

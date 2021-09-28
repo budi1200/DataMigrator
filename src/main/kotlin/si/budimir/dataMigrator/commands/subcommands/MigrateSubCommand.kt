@@ -12,7 +12,7 @@ import si.budimir.dataMigrator.util.MessageHelper
 
 class MigrateSubCommand: SubCommandBase {
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (args.size < 2 && args.size > 3) {
+        if (args.size < 2 || args.size > 3) {
             return false
         }
 
@@ -23,12 +23,17 @@ class MigrateSubCommand: SubCommandBase {
             args[2]
         }
 
+        if (sender.hasPermission(Permission.MIGRATED.getPerm())) {
+            MessageHelper.sendMessage(sender as Player, Lang.ALREADY_MIGRATED)
+            return true
+        }
+
         val migResult = MigrationHandler.migratePlayer(onlinePlayerName, oldPlayerName)
 
         if (migResult) {
-            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_SUCCESS.path, mutableMapOf())
+            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_SUCCESS)
         } else {
-            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_FAIL.path, mutableMapOf())
+            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_FAIL)
         }
         return true
     }

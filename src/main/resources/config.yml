@@ -7,3 +7,4 @@ lang:
   migration-fail: "<red>Migration Failed! Contact an admin!"
   migration-success: "<green>Migration successful!"
   migration-start-auto: "<yellow>Automatic migration started!"
+  already-migrated: "<white>You are already migrated"
