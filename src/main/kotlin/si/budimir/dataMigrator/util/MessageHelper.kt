@@ -1,42 +1,47 @@
 package si.budimir.dataMigrator.util
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
-import org.bukkit.entity.Player
+import org.bukkit.command.CommandSender
 import si.budimir.dataMigrator.DataMigrator
-import si.budimir.dataMigrator.enums.Lang
 
 abstract class MessageHelper {
     companion object {
-        private val plugin: DataMigrator = DataMigrator.instance
-        private val config = plugin.getMainConfig()
-        private val pluginPrefix = config.getParsedString("pluginPrefix")
+        private lateinit var plugin: DataMigrator
+        lateinit var pluginPrefix: Component
+
+        fun load(plugin: DataMigrator) {
+            this.plugin = plugin
+            pluginPrefix = getParsedString(plugin.mainConfig.pluginPrefix)
+        }
+
+        private val miniMessage = MiniMessage.builder().markdown().build()
+
+        fun reloadPrefix() {
+            pluginPrefix = getParsedString(plugin.mainConfig.pluginPrefix)
+        }
 
         // Send message with string from config
-        fun sendMessage(player: Player, key: Lang, placeholders: MutableMap<String, String> = hashMapOf(), prefix: Boolean = true) {
-            val path = key.getPath()
+        fun sendMessage(player: CommandSender, key: String, placeholders: MutableMap<String, String> = hashMapOf(), prefix: Boolean = true) {
             var tmp = Component.text("")
 
             if (prefix) {
                 tmp = tmp.append(pluginPrefix)
             }
 
-            tmp = tmp.append(config.getParsedString(path, placeholders))
+            tmp = tmp.append(getParsedString(key, placeholders))
 
             player.sendMessage(tmp)
         }
 
-        // Send message with provided string
-        fun sendMessage(player: Player, message: String, prefix: Boolean = true) {
-            var tmp = Component.text("")
-
-            if (prefix) {
-                tmp = tmp.append(pluginPrefix)
-            }
-
-            tmp = tmp.append(MiniMessage.markdown().parse(message))
-
-            player.sendMessage(tmp)
+        fun getParsedString(key: String, placeholders: Map<String, String> = hashMapOf()): Component {
+            return Component
+                .text("")
+                .decoration(TextDecoration.ITALIC, false)
+                .append(
+                    miniMessage.parse(key, placeholders)
+                )
         }
     }
 }

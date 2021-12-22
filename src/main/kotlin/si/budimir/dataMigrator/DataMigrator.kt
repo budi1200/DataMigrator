@@ -4,13 +4,17 @@ import org.bukkit.plugin.java.JavaPlugin
 import si.budimir.dataMigrator.commands.AsyncTabCompleteListener
 import si.budimir.dataMigrator.commands.DataMigratorCommand
 import si.budimir.dataMigrator.config.MainConfig
+import si.budimir.dataMigrator.config.MainConfigData
 import si.budimir.dataMigrator.listeners.PlayerJoinListener
 import si.budimir.dataMigrator.util.AutorankData
 import si.budimir.dataMigrator.util.LuckPermsData
 import si.budimir.dataMigrator.util.LuckPermsObject
+import si.budimir.dataMigrator.util.MessageHelper
 
 class DataMigrator: JavaPlugin() {
-    private lateinit var mainConfig: MainConfig
+    lateinit var mainConfigObj: MainConfig
+    lateinit var mainConfig: MainConfigData
+
     private lateinit var mainCommand: DataMigratorCommand
     lateinit var autorankData: Map<String, String>
     lateinit var luckpermsData: LuckPermsObject
@@ -26,7 +30,10 @@ class DataMigrator: JavaPlugin() {
         instance = this
 
         // Config init
-        mainConfig = MainConfig(instance)
+        mainConfigObj = MainConfig(instance)
+        mainConfig = mainConfigObj.getConfig()
+
+        MessageHelper.load(this)
 
         // Init commands
         mainCommand = DataMigratorCommand()
@@ -45,9 +52,5 @@ class DataMigrator: JavaPlugin() {
 
     fun getMainCommand(): DataMigratorCommand {
         return mainCommand
-    }
-
-    fun getMainConfig(): MainConfig {
-        return mainConfig
     }
 }

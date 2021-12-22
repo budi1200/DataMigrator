@@ -20,7 +20,7 @@ abstract class MigrationHandler {
                 val embeds = Embed(arrayListOf(buildEmbed(playerName, result)))
                 val json = Json.encodeToJsonElement(embeds)
 
-                WebHookHandler.send(json.toString(), plugin.getMainConfig().getString("discordWebhookUrl"))
+                WebHookHandler.send(json.toString(), plugin.mainConfig.discordWebHookUrl)
             }
 
             return result.status

@@ -1,7 +1,5 @@
 package si.budimir.dataMigrator.util
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -9,8 +7,8 @@ import kotlinx.serialization.json.decodeFromStream
 import si.budimir.dataMigrator.DataMigrator
 import java.io.File
 import java.io.FileInputStream
-import kotlin.Exception
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 abstract class LuckPermsData {
     companion object {
         private val plugin = DataMigrator.instance

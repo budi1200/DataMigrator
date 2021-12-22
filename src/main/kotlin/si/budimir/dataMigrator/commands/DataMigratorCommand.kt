@@ -3,19 +3,16 @@ package si.budimir.dataMigrator.commands
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import si.budimir.dataMigrator.commands.subcommands.ReloadSubCommand
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.commands.subcommands.MigrateSubCommand
-import si.budimir.dataMigrator.enums.Lang
 import si.budimir.dataMigrator.util.MessageHelper
 
 class DataMigratorCommand : CommandExecutor, Listener {
     private val subCommands: MutableMap<String, SubCommandBase> = HashMap()
     private var subCommandsList: List<String> = emptyList()
     private val plugin = DataMigrator.instance
-    private val config = plugin.getMainConfig()
 
     init {
         subCommands["reload"] = ReloadSubCommand()
@@ -33,7 +30,7 @@ class DataMigratorCommand : CommandExecutor, Listener {
             if (reqPerm == "" || sender.hasPermission(reqPerm)) {
                 sc.execute(sender, command, label, args)
             } else {
-                MessageHelper.sendMessage(sender as Player, Lang.MISSING_PERMISSION)
+                MessageHelper.sendMessage(sender, plugin.mainConfig.lang.missingPermission)
                 plugin.logger.info("${sender.name} is missing permission $reqPerm")
             }
         } else {

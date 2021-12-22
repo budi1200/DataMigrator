@@ -1,53 +1,71 @@
 package si.budimir.dataMigrator.config
 
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
-import java.io.File
+import org.spongepowered.configurate.CommentedConfigurationNode
+import org.spongepowered.configurate.ConfigurateException
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader
+import org.spongepowered.configurate.kotlin.objectMapperFactory
 import java.io.IOException
+import java.nio.file.Path
 
-open class ConfigBase(plugin: JavaPlugin, _fileName: String) {
-    private val main: JavaPlugin = plugin
+open class ConfigBase<T>(plugin: JavaPlugin, fileName: String, private val clazz: Class<T>) {
+    private val logger = plugin.logger
+    private val dataDirectory = plugin.dataFolder
+    private val configPath = Path.of("$dataDirectory/$fileName")
 
-    private var mainConfig: FileConfiguration? = null
-    private var configFile: File? = null
-    private val fileName: String = _fileName
-    private val logger = main.logger
+    private val loader = HoconConfigurationLoader.builder()
+        .path(configPath)
+        .prettyPrinting(true)
+        .defaultOptions { options ->
+            options.shouldCopyDefaults(true)
+            options.serializers { builder ->
+                builder.registerAnnotatedObjects(objectMapperFactory())
+            }
+        }
+        .build()
+
+    private lateinit var root: CommentedConfigurationNode
+    private var config: T? = null
 
     fun reloadConfig(): Boolean {
-        try{
-            if (!main.dataFolder.exists() || !configFile!!.exists()){
-                logger.warning("Config file not found, making a new one")
-                saveDefaultConfig()
+        root = try {
+            loader.load()
+        } catch (e: IOException) {
+            logger.severe("An error occurred while loading configuration: ${e.message}")
+            if (e.cause != null) {
+                e.cause!!.printStackTrace()
             }
-
-            if (configFile == null){
-                logger.warning("CONFIG NULL")
-                configFile = File(main.dataFolder, fileName)
-            }
-
-            mainConfig = YamlConfiguration.loadConfiguration(configFile!!)
-            return true
-        }catch (e: IOException){
-            logger.severe("Failed to reload config!")
             return false
         }
+
+        val tmp = root.get(clazz)
+
+        if (tmp == null) {
+            logger.severe("An error occurred while parsing configuration")
+            return false
+        }
+
+        config = tmp
+
+        return true
     }
 
-    protected fun getConfig(): FileConfiguration? {
-        if (mainConfig == null) reloadConfig()
-        return mainConfig
+    fun getConfig(): T {
+        if (config != null) reloadConfig()
+        return config!!
     }
 
     private fun saveDefaultConfig() {
-        if (!main.dataFolder.exists())
-            main.dataFolder.mkdir()
+        if (!dataDirectory.exists())
+            dataDirectory.mkdir()
 
-        if (configFile == null)
-            configFile = File(main.dataFolder, fileName)
-
-        if (!configFile!!.exists()) {
-            main.saveResource(fileName, false)
+        try {
+            val node: CommentedConfigurationNode = loader.load()
+            config = node[clazz]
+            node[clazz] = config
+            loader.save(node)
+        } catch (exception: ConfigurateException) {
+            logger.severe("Could not load configuration: ${exception.message}")
         }
     }
 

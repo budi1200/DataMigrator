@@ -1,16 +1,16 @@
 package si.budimir.dataMigrator.commands.subcommands
 
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
+import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.MigrationHandler
 import si.budimir.dataMigrator.commands.SubCommandBase
-import si.budimir.dataMigrator.enums.Lang
 import si.budimir.dataMigrator.enums.Permission
 import si.budimir.dataMigrator.util.MessageHelper
 
 class MigrateSubCommand: SubCommandBase {
+    private val plugin = DataMigrator.instance
+
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.size < 2 || args.size > 3) {
             return false
@@ -24,16 +24,16 @@ class MigrateSubCommand: SubCommandBase {
         }
 
         if (sender.hasPermission(Permission.MIGRATED.getPerm())) {
-            MessageHelper.sendMessage(sender as Player, Lang.ALREADY_MIGRATED)
+            MessageHelper.sendMessage(sender, plugin.mainConfig.lang.alreadyMigrated)
             return true
         }
 
         val migResult = MigrationHandler.migratePlayer(onlinePlayerName, oldPlayerName)
 
         if (migResult) {
-            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_SUCCESS)
+            MessageHelper.sendMessage(sender, plugin.mainConfig.lang.migrationSuccess)
         } else {
-            MessageHelper.sendMessage(sender as Player, Lang.MIGRATION_FAIL)
+            MessageHelper.sendMessage(sender, plugin.mainConfig.lang.migrationFail)
         }
         return true
     }

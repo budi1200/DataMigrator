@@ -1,11 +1,16 @@
 plugins {
-    kotlin("jvm") version "1.5.31"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    kotlin("plugin.serialization") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
+    id("com.github.johnrengelman.shadow") version "7.1.1"
+    kotlin("plugin.serialization") version "1.6.10"
 }
 
 group = "si.budimir"
-version = "1.0-SNAPSHOT"
+version = "1.1"
+
+val kotlinVersion = "1.6.10"
+val serializationVersion = "1.3.1"
+val okHttpVersion = "4.9.3"
+val configurateVersion = "4.1.2"
 
 repositories {
     mavenCentral()
@@ -13,30 +18,43 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
-    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0-RC")
-    compileOnly("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+    implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
+
+    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
 
     implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
+    implementation("org.spongepowered:configurate-hocon:$configurateVersion")
+    implementation("org.spongepowered:configurate-extra-kotlin:$configurateVersion")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "16"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
 tasks.processResources {
-    expand("version" to project.version)
+    expand(
+        "version" to project.version,
+        "kotlinVersion" to kotlinVersion,
+        "serializationVersion" to serializationVersion,
+        "okHttpVersion" to okHttpVersion
+    )
 }
 
 tasks.shadowJar {
     // This makes it shadow only stuff with "implementation"
     project.configurations.implementation.get().isCanBeResolved = true
-    configurations = mutableListOf(project.configurations.implementation.get())
+    configurations = mutableListOf(project.configurations.implementation.get()) as List<FileCollection>?
 
-    minimize {}
+    relocate("org.spongepowered", "si.budimir.death.libs.org.spongepowered")
 }
 
 task("buildAndPush") {

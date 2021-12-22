@@ -7,7 +7,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.MigrationHandler
-import si.budimir.dataMigrator.enums.Lang
 import si.budimir.dataMigrator.enums.Permission
 import si.budimir.dataMigrator.util.MessageHelper
 
@@ -28,15 +27,15 @@ class PlayerJoinListener(private val plugin: DataMigrator): Listener {
             plugin.logger.info("Attempting automatic migration for $playerName")
 
             // Inform player
-            MessageHelper.sendMessage(player, Lang.MIGRATION_START_AUTO)
+            MessageHelper.sendMessage(player, plugin.mainConfig.lang.migrationStartAuto)
 
             // Execute migration
             val result = MigrationHandler.migratePlayer(playerName, null)
 
             if (result) {
-                MessageHelper.sendMessage(player, Lang.MIGRATION_SUCCESS)
+                MessageHelper.sendMessage(player, plugin.mainConfig.lang.migrationSuccess)
             } else {
-                MessageHelper.sendMessage(player, Lang.MIGRATION_FAIL)
+                MessageHelper.sendMessage(player, plugin.mainConfig.lang.migrationFail)
             }
         }, 100)
     }
