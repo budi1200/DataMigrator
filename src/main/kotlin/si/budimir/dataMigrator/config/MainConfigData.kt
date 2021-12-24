@@ -15,5 +15,7 @@ data class Lang(
     val migrationFail: String = "<red>Migration Failed! Contact an admin!",
     val migrationSuccess: String = "<green>Migration successful!",
     val migrationStartAuto: String = "<yellow>Automatic migration started!",
-    val alreadyMigrated: String = "<white>You are already migrated"
+    val alreadyMigrated: String = "<white>You are already migrated",
+    val migrationDataMissing: String = "<white>No migration data found",
+    val migrationExists: String = "<red>Account already migrated!"
 )

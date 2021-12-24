@@ -7,6 +7,7 @@ import org.bukkit.event.Listener
 import si.budimir.dataMigrator.commands.subcommands.ReloadSubCommand
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.commands.subcommands.MigrateSubCommand
+import si.budimir.dataMigrator.commands.subcommands.StatusSubCommand
 import si.budimir.dataMigrator.util.MessageHelper
 
 class DataMigratorCommand : CommandExecutor, Listener {
@@ -17,6 +18,7 @@ class DataMigratorCommand : CommandExecutor, Listener {
     init {
         subCommands["reload"] = ReloadSubCommand()
         subCommands["migrate"] = MigrateSubCommand()
+        subCommands["status"] = StatusSubCommand()
 
         subCommandsList = subCommands.keys.toList()
     }

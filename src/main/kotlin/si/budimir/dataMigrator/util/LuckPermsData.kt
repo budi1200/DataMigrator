@@ -45,7 +45,7 @@ data class LuckPermsObject(
 
 @Serializable
 data class LuckPermsUser(
-    val username: String,
+    val username: String = "null",
     val primaryGroup: String? = null,
     val nodes: ArrayList<LuckPermsNode>
 )

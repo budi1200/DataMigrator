@@ -5,9 +5,9 @@ main: si.budimir.dataMigrator.DataMigrator
 api-version: 1.17
 depends: [LuckPerms, Autorank]
 commands:
-  dmig:
+  migration:
     description: Main DM command
-    usage: /dmig
+    usage: /migration
 
 permissions:
   datamigrator.admin:

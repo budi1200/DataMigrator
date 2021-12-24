@@ -1,10 +1,15 @@
 package si.budimir.dataMigrator.commands.subcommands
 
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.ktorm.database.Database
 import si.budimir.dataMigrator.DataMigrator
 import si.budimir.dataMigrator.MigrationHandler
+import si.budimir.dataMigrator.MigrationJob
 import si.budimir.dataMigrator.commands.SubCommandBase
+import si.budimir.dataMigrator.database.DatabaseHelper
 import si.budimir.dataMigrator.enums.Permission
 import si.budimir.dataMigrator.util.MessageHelper
 
@@ -12,29 +17,35 @@ class MigrateSubCommand: SubCommandBase {
     private val plugin = DataMigrator.instance
 
     override fun execute(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (args.size < 2 || args.size > 3) {
+        if (args.size < 3 || args.size > 4) {
             return false
         }
 
         val onlinePlayerName = args[1]
-        val oldPlayerName = if (args.size != 3) {
-            null
+        val oldPlayerName = args[2]
+        val override = if (args.size == 4) {
+            args[3] == "true"
         } else {
-            args[2]
+            false
         }
 
-        if (sender.hasPermission(Permission.MIGRATED.getPerm())) {
-            MessageHelper.sendMessage(sender, plugin.mainConfig.lang.alreadyMigrated)
+        val targetPlayer = Bukkit.getPlayer(onlinePlayerName)
+
+        if (targetPlayer == null) {
+            MessageHelper.sendMessage(sender, "Target player not online")
             return true
         }
 
-        val migResult = MigrationHandler.migratePlayer(onlinePlayerName, oldPlayerName)
+        DatabaseHelper.isAccountMigrated(onlinePlayerName) { isMigrated ->
+            if (isMigrated && !override) {
+                MessageHelper.sendMessage(sender, "Player is already migrated, append true to command to override")
+                return@isAccountMigrated
+            }
 
-        if (migResult) {
-            MessageHelper.sendMessage(sender, plugin.mainConfig.lang.migrationSuccess)
-        } else {
-            MessageHelper.sendMessage(sender, plugin.mainConfig.lang.migrationFail)
+            MigrationJob(targetPlayer, oldPlayerName, sender).runMigration()
+
         }
+
         return true
     }
 
