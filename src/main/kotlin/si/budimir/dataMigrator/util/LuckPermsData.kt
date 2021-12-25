@@ -46,7 +46,7 @@ data class LuckPermsObject(
 @Serializable
 data class LuckPermsUser(
     val username: String = "null",
-    val primaryGroup: String? = null,
+    val primaryGroup: String = "default",
     val nodes: ArrayList<LuckPermsNode>
 )
 
@@ -55,5 +55,6 @@ data class LuckPermsNode(
     val type: String,
     var key: String,
     val value: Boolean,
+    val expiry: Long? = null,
     val context: HashMap<String, JsonElement> = hashMapOf()
 )

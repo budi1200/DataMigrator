@@ -28,6 +28,18 @@ class MigrationJob(
     private var playtime: Int? = null
     private var claimblocks: Int? = null
 
+    private val playTimeRankLevels = hashMapOf(
+        "default" to 0,
+        "začetnik" to 1,
+        "popotnik" to 2,
+        "pionir" to 3,
+        "raziskovalec" to 4,
+        "mojster" to 5,
+        "velemojster" to 6,
+        "vojak" to 7,
+        "poveljnik" to 8
+    )
+
     fun runMigration() {
         // Migration handler
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
@@ -62,8 +74,26 @@ class MigrationJob(
             // -- Permission collection phase --
             migrationLog.addLog("=== Permission commands for $currentPlayerName ===")
 
+            // Handle user group
+            val lpPrimaryGroup = "lp user $currentPlayerName permission set datamigrator.legacy.${luckPermsUser.primaryGroup}"
+            migrationLog.addLog("+ $lpPrimaryGroup")
+            commands.add(lpPrimaryGroup)
+
             // Find all user permission nodes
             luckPermsUser.nodes.forEach { node ->
+                // Do not migrate suffix
+                if (node.type == "suffix") return@forEach
+
+                // Process only donator groups
+                if (node.type == "inheritance") {
+                    if (
+                        node.key != "group.donator"
+                        && node.key != "group.donator+"
+                        && node.key != "group.vip"
+                        && node.key != "group.vip+"
+                    ) return@forEach
+                }
+
                 val context = node.context
                 var world = ""
                 var server = ""
@@ -92,7 +122,11 @@ class MigrationJob(
                 // Handle any node changes (rank names, tags, etc...)
                 node.key = processNode(node.key)
 
-                val c = "lp user $currentPlayerName permission set ${node.key} ${node.value} $server$world"
+                var c = "lp user $currentPlayerName permission set ${node.key} ${node.value} $server$world"
+
+                if (node.expiry != null) {
+                    c = "lp user $currentPlayerName permission settemp ${node.key} ${node.value} ${node.expiry} $server$world"
+                }
 
                 commands.add(c)
                 migrationLog.addLog("+ $c")
@@ -120,6 +154,15 @@ class MigrationJob(
 
                 commands.forEach { command ->
                     Bukkit.dispatchCommand(console, command)
+                }
+
+                val playtimeChecks = playTimeRankLevels[luckPermsUser.primaryGroup]
+                if (playtimeChecks != null) {
+                    for (i in 0 until playtimeChecks) {
+                        plugin.server.scheduler.scheduleSyncDelayedTask(plugin, {
+                            Bukkit.dispatchCommand(console, "ar fcheck $currentPlayerName")
+                        }, (100 + i * 20).toLong())
+                    }
                 }
             }
 
@@ -170,6 +213,7 @@ class MigrationJob(
 
     private fun processNode(key: String): String {
         val replacementTable = hashMapOf(
+            "začetnik" to "zacetnik",
             "raziskovalec" to "pripravnik",
             "velemojster" to "bojevnik",
             "vojak" to "vodnik",
