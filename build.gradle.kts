@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "si.budimir"
-version = "1.1"
+version = "1.2"
 
 val kotlinVersion = "1.6.10"
 val serializationVersion = "1.3.1"

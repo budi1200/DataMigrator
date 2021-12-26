@@ -27,6 +27,7 @@ class MigrationJob(
     private val commands: ArrayList<String> = arrayListOf()
     private var playtime: Int? = null
     private var claimblocks: Int? = null
+    private var playtimeGroup: String? = null
 
     private val playTimeRankLevels = hashMapOf(
         "default" to 0,
@@ -74,11 +75,6 @@ class MigrationJob(
             // -- Permission collection phase --
             migrationLog.addLog("=== Permission commands for $currentPlayerName ===")
 
-            // Handle user group
-            val lpPrimaryGroup = "lp user $currentPlayerName permission set datamigrator.legacy.${luckPermsUser.primaryGroup}"
-            migrationLog.addLog("+ $lpPrimaryGroup")
-            commands.add(lpPrimaryGroup)
-
             // Find all user permission nodes
             luckPermsUser.nodes.forEach { node ->
                 // Do not migrate suffix
@@ -86,6 +82,12 @@ class MigrationJob(
 
                 // Process only donator groups
                 if (node.type == "inheritance") {
+                    val strippedGroup = node.key.replace("group." , "")
+
+                    if (playTimeRankLevels[strippedGroup] != null) {
+                        playtimeGroup = strippedGroup
+                    }
+
                     if (
                         node.key != "group.donator"
                         && node.key != "group.donator+"
@@ -132,6 +134,11 @@ class MigrationJob(
                 migrationLog.addLog("+ $c")
             }
 
+            // Handle user group
+            val lpPlaytimeGroup = "lp user $currentPlayerName permission set datamigrator.legacy.$playtimeGroup"
+            migrationLog.addLog("+ $lpPlaytimeGroup")
+            commands.add(lpPlaytimeGroup)
+
             // Add migration attempted permission
             commands.add("lp user $currentPlayerName permission set ${Permission.MIGRATION_ATTEMPTED.getPerm()} true")
 
@@ -156,12 +163,17 @@ class MigrationJob(
                     Bukkit.dispatchCommand(console, command)
                 }
 
-                val playtimeChecks = playTimeRankLevels[luckPermsUser.primaryGroup]
-                if (playtimeChecks != null) {
-                    for (i in 0 until playtimeChecks) {
-                        plugin.server.scheduler.scheduleSyncDelayedTask(plugin, {
-                            Bukkit.dispatchCommand(console, "ar fcheck $currentPlayerName")
-                        }, (100 + i * 20).toLong())
+                // Runs fcheck command x times
+                if (playtimeGroup != null) {
+                    val playtimeChecks = playTimeRankLevels[playtimeGroup]
+
+                    if (playtimeChecks != null) { // Probably a redundant if
+                        plugin.logger.info("sitll here")
+                        for (i in 0 until playtimeChecks) {
+                            plugin.server.scheduler.scheduleSyncDelayedTask(plugin, {
+                                Bukkit.dispatchCommand(console, "ar fcheck $currentPlayerName")
+                            }, (100 + i * 30).toLong())
+                        }
                     }
                 }
             }

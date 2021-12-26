@@ -6,7 +6,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import si.budimir.dataMigrator.DataMigrator
-import si.budimir.dataMigrator.MigrationHandler
 import si.budimir.dataMigrator.MigrationJob
 import si.budimir.dataMigrator.database.DatabaseHelper
 import si.budimir.dataMigrator.enums.Permission
@@ -46,14 +45,6 @@ class PlayerJoinListener(private val plugin: DataMigrator): Listener {
 
                 MigrationJob(player).runMigration()
             }
-
-            // Execute migration
-//            MigrationHandler.migratePlayer(playerName, playerUUID, null) {
-//                if (it) {
-//                    if (player.isOnline)
-//                        MessageHelper.sendMessage(player, plugin.mainConfig.lang.migrationSuccess)
-//                }
-//            }
-        }, 100)
+        }, 120)
     }
 }
