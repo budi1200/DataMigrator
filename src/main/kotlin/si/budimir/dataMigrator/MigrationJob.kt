@@ -202,7 +202,7 @@ class MigrationJob(
     private fun getClaimblocks(): Int {
         if (playtime == -1) {
             migrationLog.addLog("- Missing playtime - not calculating claimblocks")
-            return -1
+            return 100
         }
 
         val calc = (playtime!! / 60) * 100
