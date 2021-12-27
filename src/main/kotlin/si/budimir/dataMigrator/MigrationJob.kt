@@ -205,7 +205,10 @@ class MigrationJob(
             return 100
         }
 
-        val calc = (playtime!! / 60) * 100
+        var calc = (playtime!! / 60) * 100
+        if (calc == 0)
+            calc = 100
+
         migrationLog.addLog("  Calculated $calc claimblocks")
 
         return calc
