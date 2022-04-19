@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "si.budimir"
-version = "1.2.1"
+version = "1.2.2"
 
 val kotlinVersion = "1.6.10"
 val serializationVersion = "1.3.1"
@@ -26,14 +26,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
 
-    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
 
     implementation("org.ktorm:ktorm-core:${ktormVersion}")
     implementation("org.ktorm:ktorm-support-sqlite:${ktormVersion}")
     implementation("org.xerial:sqlite-jdbc:$jdbcVersion")
     implementation("joda-time:joda-time:$jodaTimeVersion")
 
-    implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
     implementation("org.spongepowered:configurate-hocon:$configurateVersion")
     implementation("org.spongepowered:configurate-extra-kotlin:$configurateVersion")
 }
@@ -63,7 +62,6 @@ tasks.shadowJar {
     configurations = mutableListOf(project.configurations.implementation.get()) as List<FileCollection>?
 
     relocate("org.spongepowered", "si.budimir.dataMigrator.libs.org.spongepowered")
-    relocate("net.kyori.adventure.text.minimessage", "si.budimir.dataMigrator.libs.net.kyori.adventure.text.minimessage")
     relocate("org.ktorm", "si.budimir.dataMigrator.libs.org.ktorm")
     relocate("org.sqlite", "si.budimir.dataMigrator.libs.sqlite")
     relocate("joda-time", "si.budimir.dataMigrator.libs.joda-time")

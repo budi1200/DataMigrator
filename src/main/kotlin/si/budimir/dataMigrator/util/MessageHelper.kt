@@ -3,6 +3,8 @@ package si.budimir.dataMigrator.util
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.command.CommandSender
 import si.budimir.dataMigrator.DataMigrator
 
@@ -16,7 +18,7 @@ abstract class MessageHelper {
             pluginPrefix = getParsedString(plugin.mainConfig.pluginPrefix)
         }
 
-        private val miniMessage = MiniMessage.builder().markdown().build()
+        private val miniMessage = MiniMessage.builder().build()
 
         fun reloadPrefix() {
             pluginPrefix = getParsedString(plugin.mainConfig.pluginPrefix)
@@ -36,11 +38,13 @@ abstract class MessageHelper {
         }
 
         fun getParsedString(key: String, placeholders: Map<String, String> = hashMapOf()): Component {
+            val resolver = TagResolver.resolver(placeholders.map { Placeholder.parsed(it.key, it.value) })
+
             return Component
                 .text("")
                 .decoration(TextDecoration.ITALIC, false)
                 .append(
-                    miniMessage.parse(key, placeholders)
+                    miniMessage.deserialize(key, resolver)
                 )
         }
     }
